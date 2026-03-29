@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Research — DelegateIQ</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    #authGuard{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#FAF7F2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999;}
+    #authGuard .ag-logo{width:56px;height:56px;background:#D97706;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;animation:agPulse 1.5s ease-in-out infinite;}
+    @keyframes agPulse{0%,100%{transform:scale(1);}50%{transform:scale(0.95);}}
+  </style>
+</head>
+<body class="app-page">
+  <div id="authGuard">
+    <div class="ag-logo">D</div>
+    <p style="font-size:14px;font-weight:600;color:#8B7355;font-family:Nunito,sans-serif;">Verifying your session...</p>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="logo-mark">D</div><span class="logo-text">DelegateIQ</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#9632;</span><span>Dashboard</span></a>
+      <a href="ai-chat.html" class="nav-item"><span class="nav-icon">&#9675;</span><span>AI Assistant</span></a>
+      <a href="research.html" class="nav-item active"><span class="nav-icon">&#9670;</span><span>Research</span></a>
+      <a href="resolutions.html" class="nav-item"><span class="nav-icon">&#9654;</span><span>Resolutions</span></a>
+      <div class="nav-section-label">Community</div>
+      <a href="network.html" class="nav-item"><span class="nav-icon">&#9651;</span><span>Network</span></a>
+      <a href="chats.html" class="nav-item"><span class="nav-icon">&#9661;</span><span>Chats</span></a>
+      <div class="nav-section-label">You</div>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">&#9711;</span><span>Profile</span></a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">&#9733;</span><span>Badges</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user" onclick="location.href='profile.html'">
+        <div class="avatar-btn" id="sidebarAvatar">?</div>
+        <div><div class="sidebar-user-name" id="sidebarName">You</div><div class="sidebar-user-role" id="sidebarSchool">Member</div></div>
+      </div>
+      <a href="#" class="nav-item" id="logoutBtn"><span class="nav-icon">&#9663;</span><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="app-header">
+      <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+      <h2>Research</h2>
+      <div class="header-right"><div class="avatar-btn" id="headerAvatar">?</div></div>
+    </header>
+
+    <div class="research-body">
+      <div class="research-hero">
+        <h2>Research Any Topic</h2>
+        <p>Real results from Wikipedia. Type any MUN topic — human trafficking, climate change, nuclear weapons, GST reform, anything.</p>
+        <div class="research-bar">
+          <span class="rs-icon">S</span>
+          <input type="text" id="researchInput" placeholder="Search any topic..." onkeydown="if(event.key==='Enter') doSearch()"/>
+          <select class="rs-select" id="filterType">
+            <option value="">All Types</option>
+            <option value="resolution">Resolutions</option>
+            <option value="report">Reports</option>
+            <option value="treaty">Treaties</option>
+          </select>
+          <button class="btn-primary" style="padding:8px 18px;font-size:13px;border-radius:var(--r-full);" onclick="doSearch()">Search</button>
+        </div>
+        <div class="quick-tags" id="quickTags"><span>Quick:</span></div>
+      </div>
+
+      <div id="searchResults"></div>
+
+      <div id="toolsSection">
+        <h3 style="font-size:16px;font-weight:800;margin-bottom:14px;">Research Tools</h3>
+        <div class="research-tools-grid">
+          <div class="tool-card tc-violet" onclick="location.href='ai-chat.html'">
+            <div class="tool-icon" style="font-size:18px;font-weight:900;">AI</div>
+            <h4>AI Research Bot</h4>
+            <p>Ask anything — full detailed answers powered by Gemini AI.</p>
+            <span class="tool-tag tt-ai">Powered by Gemini</span>
+          </div>
+          <div class="tool-card tc-cyan" onclick="showTool('poo')">
+            <div class="tool-icon" style="font-size:18px;font-weight:900;">PO</div>
+            <h4>POO Guide</h4>
+            <p>Points of Order and MUN procedure quick reference.</p>
+            <span class="tool-tag tt-guide">Reference</span>
+          </div>
+          <div class="tool-card tc-pink" onclick="showTool('dirt')">
+            <div class="tool-icon" style="font-size:18px;font-weight:900;">DF</div>
+            <h4>Dirt Finder</h4>
+            <p>Find contradictions in any country's positions using AI.</p>
+            <span class="tool-tag tt-ai">AI Powered</span>
+          </div>
+          <div class="tool-card tc-amber" onclick="showTool('paper')">
+            <div class="tool-icon" style="font-size:18px;font-weight:900;">PP</div>
+            <h4>Position Paper Builder</h4>
+            <p>AI generates a proper position paper for your setup.</p>
+            <span class="tool-tag tt-ai">AI Powered</span>
+          </div>
+          <div class="tool-card tc-emerald" onclick="location.href='resolutions.html'">
+            <div class="tool-icon" style="font-size:18px;font-weight:900;">RD</div>
+            <h4>Resolution Drafter</h4>
+            <p>Build clauses step by step with live preview.</p>
+            <span class="tool-tag tt-guide">Builder</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="toolPanel" style="display:none;padding:24px;background:white;border:1.5px solid var(--border);border-radius:var(--r-xl);margin-top:20px;"></div>
+    </div>
+  </main>
+
+  <div class="doc-modal" id="docModal" style="display:none" onclick="if(event.target===this)closeModal()">
+    <div class="doc-modal-inner">
+      <div class="modal-header">
+        <div><span class="doc-type-badge" id="modalBadge">Article</span><h3 id="modalTitle"></h3></div>
+        <button class="modal-close" onclick="closeModal()">X</button>
+      </div>
+      <div class="modal-body"><p id="modalBody" style="max-height:300px;overflow-y:auto;"></p></div>
+      <div class="modal-actions">
+        <button class="btn-primary" style="font-size:13px;padding:10px 18px;border-radius:var(--r-full);" onclick="copyModal()">Copy</button>
+        <button class="btn-glass" style="font-size:13px;padding:10px 18px;border-radius:var(--r-full);" onclick="askAIModal()">Ask AI about this</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script>
+    var GEMINI_KEY='AIzaSyDNQLTxeghCtIkg1aplQ_v3WDn4b_qTa3o';
+    var GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY;
+
+    var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
+    if(!firebase.apps.length) firebase.initializeApp(fc);
+
+    var munSetup={},userProfile={};
+    try{munSetup=JSON.parse(localStorage.getItem('diq_setup')||'{}');}catch(e){}
+    try{userProfile=JSON.parse(localStorage.getItem('diq_profile')||'{}');}catch(e){}
+
+    if(userProfile.displayName){
+      var ini=userProfile.initials||userProfile.displayName.substring(0,2).toUpperCase();
+      document.getElementById('sidebarAvatar').textContent=ini;
+      document.getElementById('sidebarName').textContent=userProfile.displayName;
+      document.getElementById('sidebarSchool').textContent=userProfile.school||'Member';
+      document.getElementById('headerAvatar').textContent=ini;
+    }
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user){ window.location.replace('login.html'); return; }
+      var g=document.getElementById('authGuard');
+      if(g){ g.style.opacity='0'; g.style.transition='opacity 0.3s'; setTimeout(function(){g.style.display='none';},300); }
+      if(!userProfile.displayName&&user.displayName){
+        var ini=user.displayName.substring(0,2).toUpperCase();
+        document.getElementById('sidebarAvatar').textContent=ini;
+        document.getElementById('sidebarName').textContent=user.displayName;
+        document.getElementById('headerAvatar').textContent=ini;
+      }
+      // Quick tags
+      var tags=document.getElementById('quickTags');
+      var items=[munSetup.topic,munSetup.country,munSetup.committee,'Human trafficking','Climate change','Nuclear weapons'].filter(Boolean).slice(0,5);
+      items.forEach(function(t){
+        var btn=document.createElement('button'); btn.className='q-tag'; btn.textContent=t;
+        btn.onclick=function(){document.getElementById('researchInput').value=t;doSearch();};
+        tags.appendChild(btn);
+      });
+    });
+
+    window.doSearch=async function(){
+      var q=document.getElementById('researchInput').value.trim();
+      if(!q) return;
+      document.getElementById('toolsSection').style.display='none';
+      document.getElementById('toolPanel').style.display='none';
+      var r=document.getElementById('searchResults');
+      r.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted);font-weight:600;">Searching for "'+esc(q)+'"...</div>';
+      try{
+        var p=JSON.parse(localStorage.getItem('diq_profile')||'{}');
+        p.researchCount=(p.researchCount||0)+1;
+        if(!p.badges) p.badges=['first_login'];
+        if(p.researchCount===1&&!p.badges.includes('first_research')) p.badges.push('first_research');
+        localStorage.setItem('diq_profile',JSON.stringify(p));
+      }catch(e){}
+
+      try{
+        var searchRes=await fetch('https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch='+encodeURIComponent(q)+'&srlimit=6&format=json&origin=*');
+        var searchData=await searchRes.json();
+        var results=searchData.query.search;
+        if(!results||!results.length){ r.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted);font-weight:600;">No results for "'+esc(q)+'". Try different keywords.</div><button class="btn-ghost-sm" style="display:block;margin:10px auto;" onclick="clearSearch()">Back</button>'; return; }
+        var titles=results.slice(0,5).map(function(x){return x.title;});
+        var sumRes=await fetch('https://en.wikipedia.org/w/api.php?action=query&titles='+encodeURIComponent(titles.join('|'))+'&prop=extracts&exintro=1&explaintext=1&exsentences=4&format=json&origin=*');
+        var sumData=await sumRes.json();
+        var pages=Object.values(sumData.query.pages);
+        var type=document.getElementById('filterType').value;
+        var typeLabel=type==='resolution'?'Resolution':type==='report'?'Report':type==='treaty'?'Treaty':'Article';
+        r.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><h3 style="font-size:16px;font-weight:800;">Results for "'+esc(q)+'"</h3><button class="btn-ghost-sm" onclick="clearSearch()">Clear</button></div>'+
+          pages.filter(function(pg){return pg.extract;}).map(function(pg){
+            var ext=pg.extract||''; var short=ext.substring(0,200)+(ext.length>200?'...':'');
+            return '<div class="doc-card" style="margin-bottom:12px;cursor:pointer;" onclick="openDoc(\''+esc(pg.title)+'\',\''+typeLabel+'\',\''+esc(ext.substring(0,800))+'\',\'https://en.wikipedia.org/wiki/'+encodeURIComponent(pg.title)+'\')">'+
+              '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span class="doc-type-badge dt-rep">'+typeLabel+'</span><span style="font-size:11px;color:var(--text-muted);margin-left:auto;font-weight:600;">Wikipedia</span></div>'+
+              '<h4 style="font-size:14px;font-weight:800;margin-bottom:6px;">'+esc(pg.title)+'</h4>'+
+              '<p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;font-weight:600;">'+esc(short)+'</p>'+
+              '<div style="display:flex;gap:8px;">'+
+              '<button class="btn-ghost-sm" onclick="event.stopPropagation();copyText(\''+esc(pg.title+': '+ext.substring(0,400))+'\',this)">Copy</button>'+
+              '<a href="https://en.wikipedia.org/wiki/'+encodeURIComponent(pg.title)+'" target="_blank" class="btn-ghost-sm" onclick="event.stopPropagation()">Read Full</a>'+
+              '<button class="btn-ghost-sm" onclick="event.stopPropagation();askAIAbout(\''+esc(pg.title)+'\')">Ask AI</button>'+
+              '</div></div>';
+          }).join('')+
+          '<div style="margin-top:16px;padding:14px;background:var(--amber-pale);border:1px solid var(--amber-soft);border-radius:var(--r-md);"><p style="font-size:12px;color:var(--amber);font-weight:700;">For official UN documents: <a href="https://digitallibrary.un.org/search?p='+encodeURIComponent(q)+'" target="_blank" style="color:var(--terracotta);">Search UN Digital Library</a></p></div>';
+      }catch(err){
+        r.innerHTML='<div style="text-align:center;padding:40px;color:var(--terracotta);font-weight:600;">Search failed. Check internet connection.</div><button class="btn-ghost-sm" style="display:block;margin:10px auto;" onclick="clearSearch()">Back</button>';
+      }
+    };
+
+    function clearSearch(){ document.getElementById('searchResults').innerHTML=''; document.getElementById('toolsSection').style.display='block'; }
+
+    window.showTool=function(tool){
+      document.getElementById('toolsSection').style.display='none';
+      document.getElementById('searchResults').innerHTML='';
+      var panel=document.getElementById('toolPanel');
+      panel.style.display='block';
+
+      if(tool==='poo'){
+        panel.innerHTML='<h3 style="margin-bottom:16px;font-size:18px;font-weight:900;">POO Guide — Points of Order</h3><div class="feat-list">'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--terra-pale);color:var(--terracotta);border-radius:8px;display:flex;align-items:center;justify-content:center;">PO</div><div><h4>Point of Order</h4><p>Raised when procedure is violated. Chair must recognize immediately. Cannot be used to comment on substance.</p></div></div>'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--amber-pale);color:var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:center;">PI</div><div><h4>Parliamentary Inquiry</h4><p>Ask Chair to clarify a procedural rule. Not used for substantive questions.</p></div></div>'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:#F0FDF4;color:#16A34A;border-radius:8px;display:flex;align-items:center;justify-content:center;">PP</div><div><h4>Personal Privilege</h4><p>When your ability to participate is impaired. Use sparingly.</p></div></div>'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--amber-pale);color:var(--amber);border-radius:8px;display:flex;align-items:center;justify-content:center;">MC</div><div><h4>Moderated Caucus</h4><p>Structured debate with time limits. State: total time, speaking time, and purpose when raising motion.</p></div></div>'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--bg-soft);color:var(--text-secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;">UC</div><div><h4>Unmoderated Caucus</h4><p>Free networking time for bloc building. State total time.</p></div></div>'+
+          '<div class="feat-item"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--terra-pale);color:var(--terracotta);border-radius:8px;display:flex;align-items:center;justify-content:center;">CD</div><div><h4>Close Debate</h4><p>Ends discussion, moves to voting. Requires 2/3 majority to pass.</p></div></div>'+
+          '</div><button class="btn-glass" style="margin-top:20px;font-size:13px;border-radius:var(--r-full);" onclick="closeTool()">Back to Tools</button>';
+      } else if(tool==='dirt'){
+        panel.innerHTML='<h3 style="margin-bottom:8px;font-size:18px;font-weight:900;">Dirt Finder</h3>'+
+          '<p style="color:var(--text-secondary);font-size:14px;margin-bottom:20px;font-weight:600;">Enter a country — AI finds real contradictions in their positions.</p>'+
+          '<div style="display:flex;gap:10px;margin-bottom:20px;">'+
+          '<input type="text" id="dirtInput" placeholder="e.g. USA, Russia, China, India..." style="flex:1;padding:12px 14px;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:var(--r-md);font-size:14px;color:var(--text-primary);font-family:Nunito,sans-serif;outline:none;"/>'+
+          '<button class="btn-primary" style="font-size:13px;padding:12px 20px;border-radius:var(--r-full);" onclick="runDirt()">Find</button>'+
+          '</div><div id="dirtResults"></div>'+
+          '<button class="btn-glass" style="margin-top:20px;font-size:13px;border-radius:var(--r-full);" onclick="closeTool()">Back to Tools</button>';
+      } else if(tool==='paper'){
+        panel.innerHTML='<h3 style="margin-bottom:8px;font-size:18px;font-weight:900;">Position Paper Builder</h3>'+
+          '<div style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px;">'+
+          '<div class="form-group"><label>Country</label><input type="text" id="ppC" value="'+esc(munSetup.country||'')+'" placeholder="e.g. Canada"/></div>'+
+          '<div class="form-group"><label>Committee</label><input type="text" id="ppCom" value="'+esc(munSetup.committee||'')+'" placeholder="e.g. UNODC"/></div>'+
+          '<div class="form-group"><label>Topic</label><input type="text" id="ppT" value="'+esc(munSetup.topic||'')+'" placeholder="e.g. Human Trafficking"/></div>'+
+          '<button class="btn-primary" style="font-size:13px;padding:12px 20px;width:fit-content;border-radius:var(--r-full);" onclick="genPaper()">Generate with AI</button>'+
+          '</div><div id="paperOut"></div>'+
+          '<button class="btn-glass" style="margin-top:20px;font-size:13px;border-radius:var(--r-full);" onclick="closeTool()">Back to Tools</button>';
+      }
+    };
+
+    window.closeTool=function(){ document.getElementById('toolPanel').style.display='none'; document.getElementById('toolsSection').style.display='block'; };
+
+    window.runDirt=async function(){
+      var country=document.getElementById('dirtInput').value.trim();
+      if(!country) return;
+      var el=document.getElementById('dirtResults');
+      el.innerHTML='<div style="color:var(--text-muted);padding:16px 0;font-weight:600;">Analysing '+esc(country)+'...</div>';
+      try{
+        var res=await fetch(GEMINI_URL,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({contents:[{role:'user',parts:[{text:'List 4-5 real contradictions in '+country+'\'s UN positions'+(munSetup.topic?' regarding '+munSetup.topic:'')+'. Format as JSON array: [{"argument":"...","context":"..."}]. Only JSON, nothing else.'}]}]})
+        });
+        var data=await res.json();
+        var text=data.candidates[0].content.parts[0].text.replace(/```json|```/g,'').trim();
+        var results=JSON.parse(text);
+        el.innerHTML='<h4 style="font-size:14px;font-weight:800;margin-bottom:12px;color:var(--terracotta);">Contradictions for '+esc(country)+'</h4>'+
+          '<div class="feat-list">'+results.map(function(r){
+            return '<div class="feat-item" style="padding:14px;"><div class="feat-icon" style="font-size:14px;font-weight:900;width:36px;height:36px;background:var(--terra-pale);color:var(--terracotta);border-radius:8px;display:flex;align-items:center;justify-content:center;">!</div><div><p style="font-size:13px;font-weight:700;margin-bottom:4px;">'+esc(r.argument)+'</p><p style="font-size:12px;color:var(--text-muted);font-weight:600;">'+esc(r.context||'')+'</p><button class="btn-ghost-sm" style="margin-top:8px;" onclick="copyText(\''+esc(r.argument)+'\',this)">Copy</button></div></div>';
+          }).join('')+'</div>';
+      }catch(e){ el.innerHTML='<p style="color:var(--terracotta);font-weight:600;">AI error. Check internet and API key.</p>'; }
+    };
+
+    window.genPaper=async function(){
+      var c=document.getElementById('ppC').value.trim()||'Your Country';
+      var com=document.getElementById('ppCom').value.trim()||'Committee';
+      var t=document.getElementById('ppT').value.trim()||'Topic';
+      var out=document.getElementById('paperOut');
+      out.innerHTML='<div style="color:var(--text-muted);padding:16px 0;font-weight:600;">AI writing paper...</div>';
+      try{
+        var pr=JSON.parse(localStorage.getItem('diq_profile')||'{}');
+        if(!pr.badges) pr.badges=['first_login'];
+        if(!pr.badges.includes('paper_writer')){ pr.badges.push('paper_writer'); localStorage.setItem('diq_profile',JSON.stringify(pr)); }
+      }catch(e){}
+      try{
+        var res=await fetch(GEMINI_URL,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({contents:[{role:'user',parts:[{text:'Write a 350 word MUN position paper for Country: '+c+', Committee: '+com+', Topic: '+t+'. Sections: I. Introduction II. Country Position III. Key Arguments IV. Proposed Solutions V. Conclusion. Use real foreign policy facts. Formal diplomatic language.'}]}]})
+        });
+        var data=await res.json();
+        var paper=data.candidates[0].content.parts[0].text;
+        out.innerHTML='<div style="background:var(--bg-soft);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-top:16px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><h4 style="font-size:14px;font-weight:800;">Position Paper — '+esc(c)+'</h4><button class="btn-ghost-sm" onclick="copyText(\''+esc(paper)+'\',this)">Copy Full</button></div><div style="font-size:13px;color:var(--text-secondary);line-height:1.8;font-weight:600;white-space:pre-wrap;">'+esc(paper)+'</div></div>';
+      }catch(e){ out.innerHTML='<p style="color:var(--terracotta);font-weight:600;">AI error. Check internet and API key.</p>'; }
+    };
+
+    window.openDoc=function(title,type,body,link){
+      document.getElementById('modalTitle').textContent=title;
+      document.getElementById('modalBody').textContent=body;
+      document.getElementById('modalBadge').textContent=type;
+      document.getElementById('docModal').dataset.link=link||'';
+      document.getElementById('docModal').style.display='flex';
+    };
+    window.closeModal=function(){ document.getElementById('docModal').style.display='none'; };
+    window.copyModal=function(){ navigator.clipboard.writeText(document.getElementById('modalTitle').textContent+'\n\n'+document.getElementById('modalBody').textContent); event.target.textContent='Copied!'; setTimeout(function(){event.target.textContent='Copy';},2000); };
+    window.askAIModal=function(){ localStorage.setItem('diq_ai_prefill','Tell me about this for MUN: '+document.getElementById('modalTitle').textContent); closeModal(); location.href='ai-chat.html'; };
+    window.askAIAbout=function(title){ localStorage.setItem('diq_ai_prefill','Explain this topic for MUN debate: '+title); location.href='ai-chat.html'; };
+    window.copyText=function(text,btn){ navigator.clipboard.writeText(text); btn.textContent='Copied!'; setTimeout(function(){btn.textContent='Copy';},2000); };
+
+    document.getElementById('logoutBtn').addEventListener('click',function(){ firebase.auth().signOut(); localStorage.removeItem('diq_profile'); localStorage.removeItem('diq_setup'); window.location.href='../index.html'; });
+    document.addEventListener('click',function(e){ var sb=document.getElementById('sidebar'),tg=document.querySelector('.sidebar-toggle'); if(sb.classList.contains('open')&&!sb.contains(e.target)&&!tg.contains(e.target)) sb.classList.remove('open'); });
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  </script>
+</body>
+</html>

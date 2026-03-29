@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login — DelegateIQ</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+</head>
+<body class="landing-page" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg-base);">
+  <div style="width:100%;max-width:420px;padding:24px;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div class="logo-mark" style="margin:0 auto 12px;width:52px;height:52px;font-size:24px;">D</div>
+      <h2 style="font-size:24px;font-weight:900;">Admin Login</h2>
+      <p style="color:var(--text-secondary);font-size:14px;font-weight:600;">DelegateIQ Admin Panel</p>
+    </div>
+    <div style="background:white;border:1.5px solid var(--border);border-radius:var(--r-xl);padding:28px;">
+      <div id="errorMsg" style="display:none;background:var(--terra-pale);border:1px solid rgba(194,98,63,0.3);border-radius:var(--r-md);padding:12px;margin-bottom:16px;font-size:13px;color:var(--terracotta);font-weight:600;"></div>
+      <div class="form-group">
+        <label>Admin Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@delegateiq.com"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPass" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="btn-primary btn-full" id="loginBtn" onclick="doLogin()" style="margin-top:8px;">Login as Admin</button>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="../index.html" style="font-size:13px;color:var(--text-muted);font-weight:600;">Back to home</a>
+      </div>
+    </div>
+  </div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
+    if(!firebase.apps.length) firebase.initializeApp(fc);
+    var auth=firebase.auth(), db=firebase.firestore();
+
+    // Admin emails — add your admin email here
+    var ADMIN_EMAILS=['admin@delegateiq.com','delegateiq2026@gmail.com'];
+
+    window.doLogin=async function(){
+      var email=document.getElementById('adminEmail').value.trim();
+      var pass=document.getElementById('adminPass').value;
+      var btn=document.getElementById('loginBtn');
+      var err=document.getElementById('errorMsg');
+      err.style.display='none';
+      if(!email||!pass){ err.style.display='block'; err.textContent='Please enter email and password.'; return; }
+      btn.textContent='Logging in...'; btn.disabled=true;
+      try{
+        await auth.signInWithEmailAndPassword(email,pass);
+        if(!ADMIN_EMAILS.includes(email)){
+          await auth.signOut();
+          err.style.display='block'; err.textContent='This account does not have admin access.';
+          btn.textContent='Login as Admin'; btn.disabled=false; return;
+        }
+        window.location.href='admin-dashboard.html';
+      }catch(e){
+        err.style.display='block';
+        err.textContent=e.code==='auth/invalid-credential'?'Invalid email or password.':e.message;
+        btn.textContent='Login as Admin'; btn.disabled=false;
+      }
+    };
+  </script>
+</body>
+</html>

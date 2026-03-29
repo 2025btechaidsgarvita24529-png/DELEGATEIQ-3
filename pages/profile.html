@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile — DelegateIQ</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    #authGuard{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#FAF7F2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999;}
+    #authGuard .ag-logo{width:56px;height:56px;background:#D97706;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;animation:agPulse 1.5s ease-in-out infinite;}
+    @keyframes agPulse{0%,100%{transform:scale(1);}50%{transform:scale(0.95);}}
+    .badge-card{background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:16px;text-align:center;position:relative;}
+    .badge-card.earned{border-color:var(--amber-soft);background:var(--amber-pale);}
+    .badge-card.locked{opacity:0.6;}
+    .badge-step{font-size:11px;font-weight:800;color:var(--amber);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+    .badge-num{width:40px;height:40px;background:var(--amber);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:white;margin:0 auto 8px;}
+    .badge-card.locked .badge-num{background:var(--border);}
+    .badge-card-name{font-size:13px;font-weight:800;color:var(--text-primary);margin-bottom:4px;}
+    .badge-card-desc{font-size:11px;color:var(--text-muted);font-weight:600;}
+    .badge-how{font-size:10px;color:var(--amber);font-weight:700;margin-top:6px;}
+  </style>
+</head>
+<body class="app-page">
+  <div id="authGuard">
+    <div class="ag-logo">D</div>
+    <p style="font-size:14px;font-weight:600;color:#8B7355;font-family:Nunito,sans-serif;">Verifying your session...</p>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="logo-mark">D</div><span class="logo-text">DelegateIQ</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-item"><span class="nav-icon">&#9632;</span><span>Dashboard</span></a>
+      <a href="ai-chat.html" class="nav-item"><span class="nav-icon">&#9675;</span><span>AI Assistant</span></a>
+      <a href="research.html" class="nav-item"><span class="nav-icon">&#9670;</span><span>Research</span></a>
+      <a href="resolutions.html" class="nav-item"><span class="nav-icon">&#9654;</span><span>Resolutions</span></a>
+      <div class="nav-section-label">Community</div>
+      <a href="network.html" class="nav-item"><span class="nav-icon">&#9651;</span><span>Network</span></a>
+      <a href="chats.html" class="nav-item"><span class="nav-icon">&#9661;</span><span>Chats</span></a>
+      <div class="nav-section-label">You</div>
+      <a href="profile.html" class="nav-item active"><span class="nav-icon">&#9711;</span><span>Profile</span></a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon">&#9733;</span><span>Badges</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user" onclick="location.href='profile.html'">
+        <div class="avatar-btn" id="sidebarAvatar">?</div>
+        <div><div class="sidebar-user-name" id="sidebarName">You</div><div class="sidebar-user-role" id="sidebarSchool">Member</div></div>
+      </div>
+      <a href="#" class="nav-item" id="logoutBtn"><span class="nav-icon">&#9663;</span><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="app-header">
+      <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+      <h2>Profile</h2>
+      <div class="header-right"><div class="avatar-btn" id="headerAvatar">?</div></div>
+    </header>
+
+    <div class="profile-body">
+      <div class="profile-hero">
+        <div class="profile-avatar-lg" id="profileAvatar">?</div>
+        <div class="profile-details">
+          <div class="profile-name" id="profileName">Your Name</div>
+          <div class="profile-school" id="profileSchool">DelegateIQ Member</div>
+          <div class="profile-tags">
+            <span class="p-tag" id="tagType">MUN Delegate</span>
+            <span class="p-tag" id="tagCommittee">-</span>
+            <span class="p-tag" id="tagCountry">-</span>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div><span class="ps-n" id="psConferences">0</span><span class="ps-l">Conferences</span></div>
+          <div><span class="ps-n" id="psBadges">1</span><span class="ps-l">Badges</span></div>
+          <div><span class="ps-n" id="psResearch">0</span><span class="ps-l">Research</span></div>
+        </div>
+      </div>
+
+      <div class="profile-tabs">
+        <button class="ptab active" onclick="switchTab('badges',this)">Badges</button>
+        <button class="ptab" onclick="switchTab('awards',this)">Awards</button>
+        <button class="ptab" onclick="switchTab('history',this)">History</button>
+      </div>
+
+      <div id="tab-badges">
+        <div class="badges-grid" id="badgesGrid"></div>
+      </div>
+
+      <div id="tab-awards" style="display:none;">
+        <div class="awards-grid" id="awardsGrid">
+          <div style="color:var(--text-muted);font-size:14px;padding:20px;font-weight:600;">No awards yet. Add a conference with an award!</div>
+        </div>
+        <button class="btn-ghost-sm" style="margin-top:14px;" onclick="addConferenceFlow()">+ Add Award</button>
+      </div>
+
+      <div id="tab-history" style="display:none;">
+        <div class="history-list" id="historyList">
+          <div style="color:var(--text-muted);font-size:14px;padding:20px;font-weight:600;">No conferences yet!</div>
+        </div>
+        <button class="btn-ghost-sm" style="margin-top:14px;" onclick="addConferenceFlow()">+ Add Conference</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script>
+    var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
+    if(!firebase.apps.length) firebase.initializeApp(fc);
+
+    // Badge sequence — in proper logical order with step numbers and how-to-earn
+    var BADGE_SEQUENCE = [
+      {id:'first_login',    num:'1', name:'First Step',      desc:'Joined DelegateIQ',          how:'Earned automatically on sign up'},
+      {id:'first_research', num:'2', name:'Researcher',      desc:'First research session',      how:'Use the AI Assistant once'},
+      {id:'first_conference',num:'3',name:'Delegate',        desc:'Attended first conference',   how:'Add your first conference in History'},
+      {id:'paper_writer',   num:'4', name:'Paper Writer',    desc:'Built a position paper',      how:'Use Position Paper Builder in Research'},
+      {id:'resolution_draft',num:'5',name:'Drafter',         desc:'Drafted a resolution',        how:'Visit the Resolutions page'},
+      {id:'first_award',    num:'6', name:'Award Winner',    desc:'Won first MUN award',         how:'Add a conference with an award'},
+      {id:'committee_join', num:'7', name:'Committee Member',desc:'Sent first chat message',     how:'Send a message in Chats'},
+      {id:'ten_research',   num:'8', name:'Scholar',         desc:'10 research sessions',        how:'Use AI Assistant 10 times'},
+      {id:'five_conferences',num:'9',name:'Seasoned',        desc:'Attended 5 conferences',      how:'Add 5 conferences in History'},
+    ];
+
+    var p={};try{p=JSON.parse(localStorage.getItem('diq_profile')||'{}');}catch(e){}
+    var s={};try{s=JSON.parse(localStorage.getItem('diq_setup')||'{}');}catch(e){}
+
+    // Load instantly from localStorage
+    if(p.displayName){
+      var ini=p.initials||p.displayName.substring(0,2).toUpperCase();
+      document.getElementById('sidebarAvatar').textContent=ini;
+      document.getElementById('sidebarName').textContent=p.displayName;
+      document.getElementById('sidebarSchool').textContent=p.school||'Member';
+      document.getElementById('headerAvatar').textContent=ini;
+      document.getElementById('profileAvatar').textContent=ini;
+      document.getElementById('profileName').textContent=p.displayName;
+      document.getElementById('profileSchool').textContent=p.school||'DelegateIQ Member';
+    }
+    if(s.type) document.getElementById('tagType').textContent=s.type+' Committee';
+    if(s.committee) document.getElementById('tagCommittee').textContent=s.committee;
+    if(s.country) document.getElementById('tagCountry').textContent=s.country;
+
+    var badges=p.badges||['first_login'];
+    var conferences=p.conferences||[];
+    var researchCount=p.researchCount||0;
+
+    document.getElementById('psConferences').textContent=conferences.length;
+    document.getElementById('psBadges').textContent=badges.length;
+    document.getElementById('psResearch').textContent=researchCount;
+
+    renderBadges(badges);
+    renderHistory(conferences);
+    renderAwards(conferences);
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user){ window.location.replace('login.html'); return; }
+      var g=document.getElementById('authGuard');
+      if(g){ g.style.opacity='0'; g.style.transition='opacity 0.3s'; setTimeout(function(){g.style.display='none';},300); }
+      if(!p.displayName&&user.displayName){
+        var ini=user.displayName.substring(0,2).toUpperCase();
+        document.getElementById('sidebarAvatar').textContent=ini;
+        document.getElementById('sidebarName').textContent=user.displayName;
+        document.getElementById('headerAvatar').textContent=ini;
+        document.getElementById('profileAvatar').textContent=ini;
+        document.getElementById('profileName').textContent=user.displayName;
+      }
+    });
+
+    function renderBadges(earned){
+      var grid=document.getElementById('badgesGrid');
+      grid.innerHTML=BADGE_SEQUENCE.map(function(b){
+        var e=earned.includes(b.id);
+        return '<div class="badge-card '+(e?'earned':'locked')+'">' +
+          '<div class="badge-step">Step '+b.num+'</div>' +
+          '<div class="badge-num">'+(e?'&#10003;':b.num)+'</div>' +
+          '<div class="badge-card-name">'+b.name+'</div>' +
+          '<div class="badge-card-desc">'+b.desc+'</div>' +
+          (!e?'<div class="badge-how">How: '+b.how+'</div>':'<div class="badge-how" style="color:var(--green);">Unlocked!</div>') +
+          '</div>';
+      }).join('');
+    }
+
+    function renderHistory(confs){
+      if(!confs.length) return;
+      document.getElementById('historyList').innerHTML=confs.slice().reverse().map(function(c){
+        return '<div class="hist-item"><div class="hist-date">'+(c.date?new Date(c.date).toLocaleDateString('en-IN',{month:'short',year:'numeric'}):'Recent')+'</div><div class="hist-info"><h4>'+c.name+'</h4><p>'+(c.committee||'')+' '+(c.country?'· '+c.country:'')+'</p>'+(c.award?'<span class="badge-chip chip-violet">Award</span>':'')+'</div></div>';
+      }).join('');
+    }
+
+    function renderAwards(confs){
+      var awarded=confs.filter(function(c){return c.award;});
+      if(!awarded.length) return;
+      document.getElementById('awardsGrid').innerHTML=awarded.map(function(c,i){
+        return '<div class="award-card '+(i===0?'gold':i===1?'silver':'bronze')+'"><div class="award-medal">'+(i===0?'1st':i===1?'2nd':'3rd')+'</div><div class="award-info"><h4>'+(c.awardName||'Award')+'</h4><p>'+c.name+' · '+(c.committee||'')+'</p></div></div>';
+      }).join('');
+    }
+
+    window.addConferenceFlow=function(){
+      var name=prompt('Conference name:'); if(!name) return;
+      var committee=prompt('Committee:')||'';
+      var country=prompt('Country represented:')||'';
+      var award=confirm('Did you win an award?');
+      var awardName=award?(prompt('Award name:')||'Award'):'';
+      var pr=JSON.parse(localStorage.getItem('diq_profile')||'{}');
+      if(!pr.conferences) pr.conferences=[];
+      pr.conferences.push({name:name,committee:committee,country:country,award:award,awardName:awardName,date:new Date().toISOString()});
+      if(!pr.badges) pr.badges=['first_login'];
+      if(pr.conferences.length===1&&!pr.badges.includes('first_conference')) pr.badges.push('first_conference');
+      if(pr.conferences.length>=5&&!pr.badges.includes('five_conferences')) pr.badges.push('five_conferences');
+      if(award&&!pr.badges.includes('first_award')) pr.badges.push('first_award');
+      localStorage.setItem('diq_profile',JSON.stringify(pr));
+      location.reload();
+    };
+
+    window.switchTab=function(name,btn){
+      document.querySelectorAll('[id^="tab-"]').forEach(function(e){e.style.display='none';});
+      document.querySelectorAll('.ptab').forEach(function(b){b.classList.remove('active');});
+      document.getElementById('tab-'+name).style.display='block';
+      btn.classList.add('active');
+    };
+
+    document.getElementById('logoutBtn').addEventListener('click',function(){
+      firebase.auth().signOut(); localStorage.removeItem('diq_profile'); localStorage.removeItem('diq_setup'); window.location.href='../index.html';
+    });
+    document.addEventListener('click',function(e){
+      var sb=document.getElementById('sidebar'),tg=document.querySelector('.sidebar-toggle');
+      if(sb.classList.contains('open')&&!sb.contains(e.target)&&!tg.contains(e.target)) sb.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

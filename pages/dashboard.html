@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — DelegateIQ</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    #authGuard{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#FAF7F2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999;}
+    #authGuard .ag-logo{width:56px;height:56px;background:#D97706;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;animation:agPulse 1.5s ease-in-out infinite;}
+    @keyframes agPulse{0%,100%{transform:scale(1);}50%{transform:scale(0.95);}}
+    .ann-card{background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:12px;}
+    .ann-card h4{font-size:14px;font-weight:800;margin-bottom:4px;color:var(--text-primary);}
+    .ann-card p{font-size:13px;color:var(--text-secondary);font-weight:600;}
+    .ann-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;display:inline-block;margin-bottom:8px;}
+    .tag-conf{background:#FEF3C7;color:#D97706;}
+    .tag-comm{background:#F0FDF4;color:#16A34A;}
+    .tag-prize{background:#FFF7ED;color:#C2623F;}
+  </style>
+</head>
+<body class="app-page">
+  <div id="authGuard">
+    <div class="ag-logo">D</div>
+    <p style="font-size:14px;font-weight:600;color:#8B7355;font-family:Nunito,sans-serif;">Verifying your session...</p>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo"><div class="logo-mark">D</div><span class="logo-text">DelegateIQ</span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+      <a href="dashboard.html" class="nav-item active"><span class="nav-icon nav-icon-svg">&#9632;</span><span>Dashboard</span></a>
+      <a href="ai-chat.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9675;</span><span>AI Assistant</span></a>
+      <a href="research.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9670;</span><span>Research</span></a>
+      <a href="resolutions.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9654;</span><span>Resolutions</span></a>
+      <div class="nav-section-label">Community</div>
+      <a href="network.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9651;</span><span>Network</span></a>
+      <a href="chats.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9661;</span><span>Chats</span></a>
+      <div class="nav-section-label">You</div>
+      <a href="profile.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9711;</span><span>Profile</span></a>
+      <a href="profile.html" class="nav-item"><span class="nav-icon nav-icon-svg">&#9733;</span><span>Badges</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user" onclick="location.href='profile.html'">
+        <div class="avatar-btn" id="sidebarAvatar">?</div>
+        <div><div class="sidebar-user-name" id="sidebarName">You</div><div class="sidebar-user-role" id="sidebarSchool">Member</div></div>
+      </div>
+      <a href="#" class="nav-item" id="logoutBtn"><span class="nav-icon nav-icon-svg">&#9663;</span><span>Logout</span></a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="app-header">
+      <button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776;</button>
+      <h2 id="greetingMain">Welcome back!</h2>
+      <div class="header-right">
+        <div class="avatar-btn" id="headerAvatar">?</div>
+      </div>
+    </header>
+
+    <div class="dashboard-body">
+      <!-- SETUP BANNER -->
+      <div id="setupBanner" style="background:var(--amber-pale);border:1.5px solid var(--amber-soft);border-radius:var(--r-lg);padding:18px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+        <div>
+          <h3 style="font-size:15px;font-weight:800;margin-bottom:4px;">Set up your MUN context</h3>
+          <p style="font-size:13px;color:var(--text-secondary);font-weight:600;">Tell us your committee, country and topic so AI can give you personalized answers.</p>
+        </div>
+        <button class="btn-primary" style="white-space:nowrap;font-size:13px;padding:10px 18px;" onclick="showSetup()">Set Up</button>
+      </div>
+
+      <!-- CONTEXT CARD (shown after setup) -->
+      <div id="contextCard" style="display:none;background:white;border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h3 style="font-size:15px;font-weight:800;" id="confName">Your Conference</h3>
+          <button onclick="resetSetup()" class="btn-ghost-sm">Change</button>
+        </div>
+        <div id="contextPills" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- ADMIN ANNOUNCEMENTS -->
+      <div id="announcementsSection" style="display:none;margin-bottom:20px;">
+        <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;">Announcements</h3>
+        <div id="announcementsList"></div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="dash-grid">
+        <div class="dash-card" onclick="location.href='ai-chat.html'" style="cursor:pointer;">
+          <div class="dash-card-icon" style="background:var(--amber-pale);color:var(--amber);">AI</div>
+          <h4>AI Assistant</h4>
+          <p>Ask about your committee, country or topic</p>
+        </div>
+        <div class="dash-card" onclick="location.href='research.html'" style="cursor:pointer;">
+          <div class="dash-card-icon" style="background:var(--terra-pale);color:var(--terracotta);">RE</div>
+          <h4>Research</h4>
+          <p>Search UN documents and topics</p>
+        </div>
+        <div class="dash-card" onclick="location.href='resolutions.html'" style="cursor:pointer;">
+          <div class="dash-card-icon" style="background:var(--sage-pale);color:var(--sage);">RD</div>
+          <h4>Resolutions</h4>
+          <p>Draft preambulatory and operative clauses</p>
+        </div>
+        <div class="dash-card" onclick="location.href='profile.html'" style="cursor:pointer;">
+          <div class="dash-card-icon" style="background:var(--amber-pale);color:var(--amber);">BD</div>
+          <h4>My Badges</h4>
+          <p id="badgeCount">1 badge earned</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SETUP MODAL -->
+  <div id="setupModal" style="display:none;position:fixed;inset:0;background:rgba(45,36,23,0.5);backdrop-filter:blur(8px);z-index:1000;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:white;border-radius:var(--r-xl);padding:32px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;">
+      <h3 style="font-size:20px;font-weight:900;margin-bottom:6px;">Your MUN Setup</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:24px;font-weight:600;">Set your context so AI gives you personalized answers.</p>
+
+      <!-- Committee Type Selection -->
+      <div class="form-group" style="margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:800;color:var(--text-primary);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:8px;">Committee Type</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button id="btnUN" onclick="selectType('UN')" style="padding:12px;border:2px solid var(--amber);border-radius:var(--r-md);background:var(--amber);color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">UN Committee</button>
+          <button id="btnIN" onclick="selectType('Indian')" style="padding:12px;border:2px solid var(--border);border-radius:var(--r-md);background:white;color:var(--text-secondary);font-size:13px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Indian Committee</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Conference Name</label>
+        <input type="text" id="setupConf" placeholder="e.g. DELMUN 2025"/>
+      </div>
+      <div class="form-group">
+        <label id="committeeLabel">Committee</label>
+        <select id="setupCommitteeSelect" style="width:100%;padding:10px 12px;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:var(--r-md);font-size:14px;font-family:'Nunito',sans-serif;outline:none;color:var(--text-primary);margin-bottom:8px;"></select>
+        <input type="text" id="setupCommittee" placeholder="Or type custom committee name..."/>
+      </div>
+      <div class="form-group">
+        <label id="countryLabel">Country / State Represented</label>
+        <input type="text" id="setupCountry" placeholder="e.g. France, Maharashtra..."/>
+      </div>
+      <div class="form-group">
+        <label>Agenda Topic</label>
+        <input type="text" id="setupTopic" placeholder="e.g. Human Trafficking, GST Reform..."/>
+      </div>
+      <div class="form-group">
+        <label>Conference Date</label>
+        <input type="date" id="setupDate"/>
+      </div>
+      <button class="btn-primary btn-full" onclick="saveSetup()" style="margin-top:8px;">Save Setup</button>
+      <button class="btn-ghost-sm" style="width:100%;margin-top:8px;padding:12px;" onclick="document.getElementById('setupModal').style.display='none'">Skip for now</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
+    if(!firebase.apps.length) firebase.initializeApp(fc);
+    var db = firebase.firestore();
+
+    // Load sidebar instantly
+    var p={};try{p=JSON.parse(localStorage.getItem('diq_profile')||'{}');}catch(e){}
+    if(p.displayName){
+      var i=p.initials||p.displayName.substring(0,2).toUpperCase();
+      document.getElementById('sidebarAvatar').textContent=i;
+      document.getElementById('sidebarName').textContent=p.displayName;
+      document.getElementById('sidebarSchool').textContent=p.school||'Member';
+      document.getElementById('headerAvatar').textContent=i;
+      document.getElementById('greetingMain').textContent='Welcome back, '+p.displayName.split(' ')[0]+'!';
+    }
+
+    var selectedType = 'UN';
+    var unCommittees = ['UNSC','UNGA','WHO','HRC','UNHRC','UNODC','UNDP','UNESCO','UNICEF','WTO','IMF','ICJ'];
+    var inCommittees = ['Lok Sabha','Rajya Sabha','State Legislature','Cabinet Committee','NITI Aayog','Supreme Court','High Court','Municipal Council'];
+
+    function selectType(type) {
+      selectedType = type;
+      var btnUN = document.getElementById('btnUN');
+      var btnIN = document.getElementById('btnIN');
+      if(type === 'UN') {
+        btnUN.style.background = 'var(--amber)'; btnUN.style.borderColor = 'var(--amber)'; btnUN.style.color = 'white';
+        btnIN.style.background = 'white'; btnIN.style.borderColor = 'var(--border)'; btnIN.style.color = 'var(--text-secondary)';
+        document.getElementById('committeeLabel').textContent = 'UN Committee';
+        document.getElementById('countryLabel').textContent = 'Country Represented';
+        document.getElementById('setupCountry').placeholder = 'e.g. France, India, USA...';
+      } else {
+        btnIN.style.background = 'var(--amber)'; btnIN.style.borderColor = 'var(--amber)'; btnIN.style.color = 'white';
+        btnUN.style.background = 'white'; btnUN.style.borderColor = 'var(--border)'; btnUN.style.color = 'var(--text-secondary)';
+        document.getElementById('committeeLabel').textContent = 'Indian Committee';
+        document.getElementById('countryLabel').textContent = 'State / Constituency';
+        document.getElementById('setupCountry').placeholder = 'e.g. Maharashtra, Delhi...';
+      }
+      // Populate dropdown
+      var sel = document.getElementById('setupCommitteeSelect');
+      sel.innerHTML = '<option value="">Select committee...</option>';
+      var list = type === 'UN' ? unCommittees : inCommittees;
+      list.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+    }
+
+    // Init with UN selected
+    selectType('UN');
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user){ window.location.replace('login.html'); return; }
+      // Hide auth guard
+      var g=document.getElementById('authGuard');
+      if(g){ g.style.opacity='0'; g.style.transition='opacity 0.3s'; setTimeout(function(){g.style.display='none';},300); }
+
+      if(!p.displayName && user.displayName){
+        var i=user.displayName.substring(0,2).toUpperCase();
+        document.getElementById('sidebarAvatar').textContent=i;
+        document.getElementById('sidebarName').textContent=user.displayName;
+        document.getElementById('headerAvatar').textContent=i;
+        document.getElementById('greetingMain').textContent='Welcome back, '+user.displayName.split(' ')[0]+'!';
+      }
+
+      // Check setup
+      var setup=null; try{setup=JSON.parse(localStorage.getItem('diq_setup')||'null');}catch(e){}
+      if(setup){
+        document.getElementById('setupBanner').style.display='none';
+        document.getElementById('contextCard').style.display='block';
+        document.getElementById('confName').textContent=setup.conf||'Your Conference';
+        var pills='';
+        if(setup.type) pills+='<span class="badge-chip chip-green">'+setup.type+' Committee</span>';
+        if(setup.committee) pills+='<span class="badge-chip chip-violet">'+setup.committee+'</span>';
+        if(setup.country) pills+='<span class="badge-chip">'+setup.country+'</span>';
+        if(setup.topic) pills+='<span class="badge-chip">'+setup.topic+'</span>';
+        document.getElementById('contextPills').innerHTML=pills;
+      }
+
+      // Badge count
+      var badges=(p.badges||['first_login']).length;
+      document.getElementById('badgeCount').textContent=badges+' badge'+(badges!==1?'s':'')+' earned';
+
+      // Load admin announcements
+      loadAnnouncements();
+    });
+
+    function loadAnnouncements(){
+      db.collection('announcements').orderBy('createdAt','desc').limit(5).get().then(function(snap){
+        if(snap.empty) return;
+        document.getElementById('announcementsSection').style.display='block';
+        var html='';
+        snap.forEach(function(doc){
+          var d=doc.data();
+          var tagClass = d.type==='conference'?'tag-conf':d.type==='committee'?'tag-comm':'tag-prize';
+          var tagLabel = d.type==='conference'?'Conference':d.type==='committee'?'Committee':'Prize';
+          html+='<div class="ann-card"><span class="ann-tag '+tagClass+'">'+tagLabel+'</span><h4>'+d.title+'</h4><p>'+d.body+'</p></div>';
+        });
+        document.getElementById('announcementsList').innerHTML=html;
+      }).catch(function(){});
+    }
+
+    window.showSetup=function(){ document.getElementById('setupModal').style.display='flex'; };
+
+    window.resetSetup=function(){
+      localStorage.removeItem('diq_setup');
+      document.getElementById('contextCard').style.display='none';
+      document.getElementById('setupBanner').style.display='flex';
+    };
+
+    window.saveSetup=function(){
+      var sel = document.getElementById('setupCommitteeSelect').value;
+      var custom = document.getElementById('setupCommittee').value.trim();
+      var committee = sel || custom;
+      var setup={
+        type: selectedType,
+        conf: document.getElementById('setupConf').value.trim(),
+        committee: committee,
+        country: document.getElementById('setupCountry').value.trim(),
+        topic: document.getElementById('setupTopic').value.trim(),
+        date: document.getElementById('setupDate').value
+      };
+      localStorage.setItem('diq_setup',JSON.stringify(setup));
+      document.getElementById('setupModal').style.display='none';
+      location.reload();
+    };
+
+    document.getElementById('logoutBtn').addEventListener('click',function(){
+      firebase.auth().signOut();
+      localStorage.removeItem('diq_profile'); localStorage.removeItem('diq_setup');
+      window.location.href='../index.html';
+    });
+    document.addEventListener('click',function(e){
+      var sb=document.getElementById('sidebar'),tg=document.querySelector('.sidebar-toggle');
+      if(sb.classList.contains('open')&&!sb.contains(e.target)&&!tg.contains(e.target)) sb.classList.remove('open');
+    });
+  </script>
+</body>
+</html>

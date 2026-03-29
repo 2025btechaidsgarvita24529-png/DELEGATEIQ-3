@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — DelegateIQ</title>
+  <link rel="stylesheet" href="../css/style.css"/>
+  <style>
+    #authGuard{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#FAF7F2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:99999;}
+    #authGuard .ag-logo{width:56px;height:56px;background:#D97706;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:white;}
+    .admin-card{background:white;border:1.5px solid var(--border);border-radius:var(--r-xl);padding:24px;margin-bottom:20px;}
+    .ann-item{background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .ann-item h4{font-size:13px;font-weight:800;margin-bottom:2px;}
+    .ann-item p{font-size:12px;color:var(--text-muted);font-weight:600;}
+    .tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;}
+    .tag-c{background:#FEF3C7;color:#D97706;}
+    .tag-m{background:#F0FDF4;color:#16A34A;}
+    .tag-p{background:#FFF7ED;color:#C2623F;}
+  </style>
+</head>
+<body class="app-page">
+  <div id="authGuard">
+    <div class="ag-logo">D</div>
+    <p style="font-size:14px;font-weight:600;color:#8B7355;font-family:Nunito,sans-serif;">Verifying admin access...</p>
+  </div>
+
+  <main class="main-content" style="margin-left:0;max-width:900px;margin:0 auto;padding:24px;">
+    <header style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px;">
+          <div class="logo-mark" style="width:36px;height:36px;font-size:16px;">D</div>
+          <h1 style="font-size:22px;font-weight:900;">Admin Dashboard</h1>
+        </div>
+        <p style="font-size:13px;color:var(--text-secondary);font-weight:600;">DelegateIQ — Admin Panel</p>
+      </div>
+      <button class="btn-ghost-sm" onclick="doLogout()">Logout</button>
+    </header>
+
+    <!-- STATS -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">
+      <div class="dash-card" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;font-weight:900;color:var(--amber);" id="statUsers">-</div>
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Announcements</div>
+      </div>
+      <div class="dash-card" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;font-weight:900;color:var(--amber);">Live</div>
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">App Status</div>
+      </div>
+      <div class="dash-card" style="text-align:center;padding:20px;">
+        <div style="font-size:28px;font-weight:900;color:var(--amber);">Free</div>
+        <div style="font-size:12px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Current Plan</div>
+      </div>
+    </div>
+
+    <!-- POST ANNOUNCEMENT -->
+    <div class="admin-card">
+      <h3 style="font-size:17px;font-weight:900;margin-bottom:16px;">Post Announcement</h3>
+      <p style="font-size:13px;color:var(--text-secondary);font-weight:600;margin-bottom:16px;">Announcements appear on every delegate's dashboard instantly.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="annType" style="width:100%;padding:10px 12px;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:var(--r-md);font-size:14px;font-family:Nunito,sans-serif;outline:none;">
+            <option value="conference">Conference Date</option>
+            <option value="committee">Committee Update</option>
+            <option value="prize">Prize / Award Info</option>
+            <option value="general">General</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="annTitle" placeholder="e.g. DELMUN 2025 Registration Open"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="annBody" rows="3" placeholder="e.g. Registration for DELMUN 2025 is now open. Last date: March 30. Registration fee: Rs 500..." style="width:100%;padding:10px 12px;background:var(--bg-soft);border:1.5px solid var(--border);border-radius:var(--r-md);font-size:14px;font-family:Nunito,sans-serif;resize:vertical;outline:none;box-sizing:border-box;"></textarea>
+      </div>
+      <button class="btn-primary" onclick="postAnnouncement()" id="postBtn" style="font-size:13px;padding:10px 24px;border-radius:var(--r-full);">Post Announcement</button>
+      <div id="postMsg" style="display:none;margin-top:12px;font-size:13px;font-weight:600;color:var(--green);"></div>
+    </div>
+
+    <!-- EXISTING ANNOUNCEMENTS -->
+    <div class="admin-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:17px;font-weight:900;">Current Announcements</h3>
+        <button class="btn-ghost-sm" onclick="loadAnnouncements()">Refresh</button>
+      </div>
+      <div id="annList"><div style="color:var(--text-muted);font-size:13px;font-weight:600;">Loading...</div></div>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
+    if(!firebase.apps.length) firebase.initializeApp(fc);
+    var auth=firebase.auth(), db=firebase.firestore();
+    var ADMIN_EMAILS=['admin@delegateiq.com','delegateiq2026@gmail.com'];
+
+    firebase.auth().onAuthStateChanged(function(user){
+      if(!user){ window.location.replace('admin-login.html'); return; }
+      if(!ADMIN_EMAILS.includes(user.email)){ auth.signOut(); window.location.replace('admin-login.html'); return; }
+      var g=document.getElementById('authGuard');
+      if(g){ g.style.opacity='0'; g.style.transition='opacity 0.3s'; setTimeout(function(){g.style.display='none';},300); }
+      loadAnnouncements();
+    });
+
+    function loadAnnouncements(){
+      db.collection('announcements').orderBy('createdAt','desc').get().then(function(snap){
+        document.getElementById('statUsers').textContent=snap.size;
+        if(snap.empty){ document.getElementById('annList').innerHTML='<div style="color:var(--text-muted);font-size:13px;font-weight:600;">No announcements yet.</div>'; return; }
+        var html='';
+        snap.forEach(function(doc){
+          var d=doc.data();
+          var tagClass=d.type==='conference'?'tag-c':d.type==='committee'?'tag-m':'tag-p';
+          var tagLabel=d.type==='conference'?'Conference':d.type==='committee'?'Committee':d.type==='prize'?'Prize':'General';
+          html+='<div class="ann-item"><div><span class="tag '+tagClass+'" style="margin-bottom:4px;display:inline-block;">'+tagLabel+'</span><h4>'+d.title+'</h4><p>'+d.body.substring(0,80)+(d.body.length>80?'...':'')+'</p></div><button class="btn-ghost-sm" style="color:var(--terracotta);border-color:var(--terracotta);flex-shrink:0;" onclick="deleteAnn(\''+doc.id+'\')">Delete</button></div>';
+        });
+        document.getElementById('annList').innerHTML=html;
+      }).catch(function(e){ document.getElementById('annList').innerHTML='<div style="color:var(--terracotta);font-size:13px;font-weight:600;">Error loading. Check Firestore rules.</div>'; });
+    }
+
+    window.postAnnouncement=async function(){
+      var title=document.getElementById('annTitle').value.trim();
+      var body=document.getElementById('annBody').value.trim();
+      var type=document.getElementById('annType').value;
+      if(!title||!body){ alert('Please fill in title and message!'); return; }
+      var btn=document.getElementById('postBtn');
+      btn.textContent='Posting...'; btn.disabled=true;
+      try{
+        await db.collection('announcements').add({ title:title, body:body, type:type, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+        document.getElementById('annTitle').value='';
+        document.getElementById('annBody').value='';
+        var msg=document.getElementById('postMsg');
+        msg.style.display='block'; msg.textContent='Announcement posted! All delegates will see it on their dashboard.';
+        setTimeout(function(){msg.style.display='none';},4000);
+        loadAnnouncements();
+      }catch(e){ alert('Error: '+e.message+'\n\nMake sure Firestore rules allow writes.'); }
+      btn.textContent='Post Announcement'; btn.disabled=false;
+    };
+
+    window.deleteAnn=async function(id){
+      if(!confirm('Delete this announcement?')) return;
+      await db.collection('announcements').doc(id).delete();
+      loadAnnouncements();
+    };
+
+    window.doLogout=function(){ auth.signOut(); window.location.href='admin-login.html'; };
+  </script>
+</body>
+</html>
