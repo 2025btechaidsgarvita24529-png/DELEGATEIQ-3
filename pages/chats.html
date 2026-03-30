@@ -174,7 +174,15 @@
       if(s) s.style.display='none';
       if(g) g.textContent='';
     }
+    
+    // Timeout fallback — if Firebase slow, show page anyway if logged in before
+    var _p={};try{_p=JSON.parse(localStorage.getItem('diq_profile')||'{}');}catch(e){}
+    var _authTO=setTimeout(function(){
+      if(_p.displayName){ var g=document.getElementById('authGuard'); if(g) g.style.display='none'; }
+    },4000);
+
     firebase.auth().onAuthStateChanged(user => {
+      if(typeof _authTO!=="undefined") clearTimeout(_authTO);
       if(!user){ window.location.replace('login.html'); return; }
       var guard=document.getElementById('authGuard');
       if(guard){ guard.style.opacity='0'; guard.style.transition='opacity 0.3s'; setTimeout(function(){guard.style.display='none';},300); }
