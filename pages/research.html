@@ -125,7 +125,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script>
-    var GEMINI_KEY='AIzaSyDNQLTxeghCtIkg1aplQ_v3WDn4b_qTa3o';
+    var GEMINI_KEY='YOUR_GEMINI_KEY_HERE';
     var GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+GEMINI_KEY;
 
     var fc={apiKey:"AIzaSyCqNmnpQRg5uUYu4Pp_k0k90wNBmJxpuH0",authDomain:"delegate-iq-2025.firebaseapp.com",projectId:"delegate-iq-2025",storageBucket:"delegate-iq-2025.firebasestorage.app",messagingSenderId:"612696020579",appId:"1:612696020579:web:90255861a0d531f2580a56"};
@@ -166,7 +166,8 @@
     window.doSearch=async function(){
       var q=document.getElementById('researchInput').value.trim();
       if(!q) return;
-      document.getElementById('toolsSection').style.display='none';
+      // Keep tools visible - just show results above
+      // document.getElementById('toolsSection').style.display='none';
       document.getElementById('toolPanel').style.display='none';
       var r=document.getElementById('searchResults');
       r.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-muted);font-weight:600;">Searching for "'+esc(q)+'"...</div>';
@@ -202,7 +203,7 @@
               '<button class="btn-ghost-sm" onclick="event.stopPropagation();askAIAbout(\''+esc(pg.title)+'\')">Ask AI</button>'+
               '</div></div>';
           }).join('')+
-          '<div style="margin-top:16px;padding:14px;background:var(--amber-pale);border:1px solid var(--amber-soft);border-radius:var(--r-md);"><p style="font-size:12px;color:var(--amber);font-weight:700;">For official UN documents: <a href="https://digitallibrary.un.org/search?p='+encodeURIComponent(q)+'" target="_blank" style="color:var(--terracotta);">Search UN Digital Library</a></p></div>';
+          '<div style="margin-bottom:16px;padding:14px;background:var(--amber-pale);border:1px solid var(--amber-soft);border-radius:var(--r-md);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><p style="font-size:12px;color:var(--amber);font-weight:700;">Search official UN documents directly:</p><a href="https://digitallibrary.un.org/search?p='+encodeURIComponent(q)+'" target="_blank" class="btn-ghost-sm" style="font-size:11px;">Open UN Digital Library</a></div>';
       }catch(err){
         r.innerHTML='<div style="text-align:center;padding:40px;color:var(--terracotta);font-weight:600;">Search failed. Check internet connection.</div><button class="btn-ghost-sm" style="display:block;margin:10px auto;" onclick="clearSearch()">Back</button>';
       }
@@ -211,7 +212,8 @@
     function clearSearch(){ document.getElementById('searchResults').innerHTML=''; document.getElementById('toolsSection').style.display='block'; }
 
     window.showTool=function(tool){
-      document.getElementById('toolsSection').style.display='none';
+      // Keep tools visible - just show results above
+      // document.getElementById('toolsSection').style.display='none';
       document.getElementById('searchResults').innerHTML='';
       var panel=document.getElementById('toolPanel');
       panel.style.display='block';
